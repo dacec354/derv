@@ -1,0 +1,6 @@
+/.cache
+/.vscode
+/.devbrain
+/target
+
+*.macrocall
