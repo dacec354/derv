@@ -146,6 +146,13 @@ protected class Parser {
         }
     }
 }
+
+extend Array<SubTerm>  {
+    func toReversed(): Array<SubTerm> {
+        this.reverse()
+        this
+    }
+}
 /*
 Exprs -> Expr Exprs'
 Exprs' -> ',' Expr Exprs' | ε
@@ -155,7 +162,7 @@ Args -> '(' Content ')' | ε
 Content -> id Content | '(' Content ')' Content | ε
 */
 public func deriveImpl(attr: Tokens, input: Tokens): Tokens {
-    Parser(attr).parse().iterator()
+    Parser(attr).parse().toReversed().iterator()
         .map {
             s => Token(AT) + match (s) {
                 case Single(v) => Token(IDENTIFIER, "Derive" + v[0].value).toTokens()
@@ -164,8 +171,14 @@ public func deriveImpl(attr: Tokens, input: Tokens): Tokens {
                 case QualifiedCall(v) => v[0..2] + Token(IDENTIFIER, "Derive" + v[2].value) + Token(LSQUARE) + v[4..v.size - 1] + Token(RSQUARE)
             }
         }
-        .intersperse(Token(NL).toTokens())
-        .fold(quote()) { acc, s => acc + s } + Token(NL) + input
+        .enumerate()
+        .fold(Tokens()) {
+            acc, s => if (s[0] == 0) {
+                quote($(s[1]) ($input))
+            } else {
+                quote($(s[1]) ($acc))
+            }
+        }
 }
 
 func diagReportError<T>(node: T, message: String, hint: String, error: () -> Exception): Nothing where T <: ToTokens {
