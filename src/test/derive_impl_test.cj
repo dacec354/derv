@@ -13,16 +13,13 @@ class DeriveImplTests {
         @Expect(compareTokens(source, expected))
     }
 
-    // @Skip
+    // @Skip   
     @TestCase
     func testSingle(): Unit {
         let attr = quote(Hashable, Builder, ToString)
         let input = quote(class Hello {})
         let output = deriveImpl(attr, input)
-        this.expectTokens(output, quote(\@DeriveHashable
-        \@DeriveBuilder
-        \@DeriveToString
-        ) + input)
+        this.expectTokens(output, quote(\@DeriveHashable(\@DeriveBuilder(\@DeriveToString($input)))))
     }
 
     // @Skip
@@ -32,11 +29,7 @@ class DeriveImplTests {
         let input = quote(class Hello {})
         let output = deriveImpl(attr, input)
         println(output)
-        this.expectTokens(output, quote(\@derv.DeriveHashable
-        \@derive.DeriveBuilder
-        \@deriving.DeriveToString
-        \@hash.DeriveHashEqual
-        ) + input)
+        this.expectTokens(output, quote(\@derv.DeriveHashable(\@derive.DeriveBuilder(\@deriving.DeriveToString(\@hash.DeriveHashEqual($input))))))
     }
 
     // @Skip
@@ -46,10 +39,7 @@ class DeriveImplTests {
         let input = quote(class Hello {})
         let output = deriveImpl(attr, input)
         println(output)
-        this.expectTokens(output, quote(\@DeriveHashable[1]
-        \@DeriveBuilder[2]
-        \@DeriveToString[3]
-        ) + input)
+        this.expectTokens(output, quote(\@DeriveHashable[1](\@DeriveBuilder[2](\@DeriveToString[3]($input)))))
     }
 
     // @Skip
@@ -59,11 +49,7 @@ class DeriveImplTests {
         let input = quote(class Hello {})
         let output = deriveImpl(attr, input)
         println(output)
-        this.expectTokens(output, quote(\@derv.DeriveHashable["1"]
-        \@derive.DeriveBuilder["4"]
-        \@deriving.DeriveToString["5"]
-        \@hash.DeriveHashEqual["7"]
-        ) + input)
+        this.expectTokens(output, quote(\@derv.DeriveHashable["1"](\@derive.DeriveBuilder["4"](\@deriving.DeriveToString["5"](\@hash.DeriveHashEqual["7"]($input))))))
     }
 
     // @Skip
@@ -72,10 +58,7 @@ class DeriveImplTests {
         let attr = quote(Builder(init = false), ToString(1(5)6(())), Hashable([{..fds))
         let input = quote(class Hello {})
         let output = deriveImpl(attr, input)
-        this.expectTokens(output, quote(\@DeriveBuilder[init = false]
-        \@DeriveToString[1(5)6(())]
-        \@DeriveHashable[[{..fds]
-        ) + input)
+        this.expectTokens(output, quote(\@DeriveBuilder[init = false](\@DeriveToString[1(5)6(())](\@DeriveHashable[[{..fds]($input)))))
     }
 
     // @Skip
@@ -84,10 +67,7 @@ class DeriveImplTests {
         let attr = quote(derive_builder.Builder(init = false), derive.Builder(1(5)6(())), derive.ToString(5), hash.HashEqual(5))
         let input = quote(class Hello {})
         let output = deriveImpl(attr, input)
-        this.expectTokens(output, quote(\@derive_builder.DeriveBuilder[init = false]
-        \@derive.DeriveBuilder[1(5)6(())]
-        \@derive.DeriveToString[5]
-        \@hash.DeriveHashEqual[5]
-        ) + input)
+        println(output)
+        this.expectTokens(output, quote(\@derive_builder.DeriveBuilder[init = false](\@derive.DeriveBuilder[1(5) 6(())](\@derive.DeriveToString[5](\@hash.DeriveHashEqual[5]($input))))))
     }
 }
