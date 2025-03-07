@@ -166,9 +166,9 @@ public func deriveImpl(attr: Tokens, input: Tokens): Tokens {
         .map {
             s => Token(AT) + match (s) {
                 case Single(v) => Token(IDENTIFIER, "Derive" + v[0].value).toTokens()
-                case Qualified(v) => v[0..2] + Token(IDENTIFIER, "Derive" + v[2].value)
+                case Qualified(v) => Token(v[0].kind, v[0].value) + Token(v[1].kind, v[1].value) + Token(IDENTIFIER, "Derive" + v[2].value)
                 case SingleCall(v) => Token(IDENTIFIER, "Derive" + v[0].value) + Token(LSQUARE) + v[2..v.size - 1] + Token(RSQUARE)
-                case QualifiedCall(v) => v[0..2] + Token(IDENTIFIER, "Derive" + v[2].value) + Token(LSQUARE) + v[4..v.size - 1] + Token(RSQUARE)
+                case QualifiedCall(v) => Token(v[0].kind, v[0].value) + Token(v[1].kind, v[1].value) + Token(IDENTIFIER, "Derive" + v[2].value) + Token(LSQUARE) + v[4..v.size - 1] + Token(RSQUARE)
             }
         }
         .enumerate()
